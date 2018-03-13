@@ -1,0 +1,146 @@
+def getPossValue(board, row, col):
+    result = []  
+    #For each number (1,6)
+    #TODO: To create the rowList, just index the row from the board
+    #TODO: To create the colList, iterate through the column with a for loop, appending the values to colList
+    #TODO: To create the boxList, iterate through the six boxes using modulus and integer division or using nested ifs in a separate getBox function
+    for value in range(1, 7):
+        #Check to see if the number exists in the row
+        if value in rowList(board, row):
+            continue #don't record value as a possible value for the row and column
+        #Check to see if the number exists in the col
+        elif value in colList(board, col): 
+            continue
+        #Check to see if the number exists in the box:
+        elif value in boxList(board, row, col):
+            continue
+        else:
+            result.append(value) #record value as a possible value for the row and column
+    
+    return result
+
+            
+def rowList(board, row):
+     return board[row] 
+
+def colList(board, col):
+    for row in range(6):
+       yield board[row][col]
+        
+def boxList(board, row, col):
+    #Find what rows are in the box
+    
+    if row in [0, 1]:
+        boxRows = [0, 1]
+    elif row in  [2, 3]:
+        boxRows = [2,3]  
+    elif row in [4,5]:
+        boxRows = [4,5]    
+    else:
+        print("error, choose a different number")
+      
+    if col in [0, 1, 2]:
+        boxCols = [0, 1, 2]
+    elif col in  [3, 4, 5]:
+        boxCols = [3,4,5]  
+    else:
+        print("error, choose a different number")
+      
+     #for every row in box's rows
+     #for every col in the box's columns
+     #yield that cell
+    for boxThing in boxRows:
+        for colThing in boxCols:
+            yield board[boxThing][colThing]  
+        
+#Recursive Solution Method
+            
+def check(board, preRow, nodeCount):
+    #for row in board:
+        #print(row)
+    #print(nodeCount)  for error checking and debugging, to ee how it printed out
+    #input() ############
+
+    #Check each row in turn
+    for row in range (preRow, 6):
+        #Check each column in turn
+        for col in range(6):
+            #Only choose try values if the cell doesn't already have one
+            if board[row][col] == 0:
+                nodeCount += 1
+            
+                #Get the number of solutions for that cell
+                possValuesForCurrentCell = getPossValue(board, row, col)
+                #For each possible value
+                for value in possValuesForCurrentCell:
+                    #Assign that value to the board
+                    board[row][col] = value
+                    #Perform a recursive call
+                    evaluation, nodeCount = check(board, row, nodeCount)
+                    if evaluation== True:
+                        return True, nodeCount
+                #Reset the cell to 0
+                board[row][col] = 0 
+                #Return that there's a contradiction
+                return False, nodeCount
+              
+    #If we have checked through every row, col and there aren't any empty cells, the solution works!
+    return True, nodeCount
+
+
+def getInfo(fileName):
+    matrix = []    
+
+
+        
+    with open (fileName) as testRun:
+        for i in range(6):
+            #store one line in "newLIne variable.
+            newLine = testRun.readline()
+            lineList = []
+            for newChar in newLine[0:6]:
+            #convert each character to an  integer from a string text thing.                                                   
+                newInt = int(newChar)
+                
+                     #  append the integer we worked with into a list. ALl have to be in the for loop
+                lineList.append(newInt)
+            matrix.append(lineList)
+    return matrix
+            
+                
+
+                
+            
+               
+    
+  
+def main():
+
+        
+    #take in values numbers
+    board = getInfo("testPuzzle2.txt")
+    
+    #solve puzzle
+    evaluation, nodeCount  = check(board, 0,1)
+    print(board)
+    print(nodeCount)
+
+      
+main()      
+
+    
+    
+'''-------------------------------------
+160005
+005200
+500030
+040001
+004100
+300054'''
+  
+  
+
+
+                    
+
+  
